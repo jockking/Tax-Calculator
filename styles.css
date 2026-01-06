@@ -249,6 +249,78 @@ header h1 {
     font-style: italic;
 }
 
+/* Tax Band Breakdown */
+.band-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.band-item {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 6px;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+
+.band-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(2px);
+}
+
+.band-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.band-name {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.band-rate {
+    background: var(--primary-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.band-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.band-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.band-detail-row span:first-child {
+    color: var(--text-muted);
+}
+
+.band-amount {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.band-tax {
+    font-weight: 700;
+    color: var(--danger-color);
+}
+
 footer {
     background: var(--light-bg);
     padding: 20px 30px;

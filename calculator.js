@@ -80,6 +80,7 @@ function calculatePersonalAllowance(income) {
 function calculateScottishIncomeTax(taxableIncome) {
     let tax = 0;
     let previousThreshold = 0;
+    const breakdown = [];
 
     const personalAllowance = calculatePersonalAllowance(taxableIncome);
 
@@ -93,7 +94,18 @@ function calculateScottishIncomeTax(taxableIncome) {
 
         if (taxableIncome > previousThreshold) {
             const taxableInBand = Math.min(taxableIncome, currentThreshold) - previousThreshold;
-            tax += taxableInBand * band.rate;
+            const taxInBand = taxableInBand * band.rate;
+            tax += taxInBand;
+
+            // Only add to breakdown if there's income in this band
+            if (taxableInBand > 0) {
+                breakdown.push({
+                    name: band.name,
+                    amount: taxableInBand,
+                    rate: band.rate,
+                    tax: taxInBand
+                });
+            }
         }
 
         previousThreshold = currentThreshold;
@@ -103,7 +115,7 @@ function calculateScottishIncomeTax(taxableIncome) {
         }
     }
 
-    return tax;
+    return { tax, breakdown };
 }
 
 function calculateNationalInsurance(grossSalary) {
@@ -166,6 +178,50 @@ function showPersonalAllowanceWarning(taxableIncome, personalAllowance) {
     }
 }
 
+function showTaxBandBreakdown(breakdown) {
+    // Remove any existing breakdown
+    const existingBreakdown = document.getElementById('taxBandBreakdown');
+    if (existingBreakdown) {
+        existingBreakdown.remove();
+    }
+
+    // Create the breakdown card
+    const breakdownDiv = document.createElement('div');
+    breakdownDiv.id = 'taxBandBreakdown';
+    breakdownDiv.className = 'result-card';
+
+    let breakdownHTML = '<h3>Tax Band Breakdown</h3><div class="band-breakdown-list">';
+
+    breakdown.forEach(band => {
+        const percentage = (band.rate * 100).toFixed(0);
+        breakdownHTML += `
+            <div class="band-item">
+                <div class="band-header">
+                    <span class="band-name">${band.name}</span>
+                    <span class="band-rate">${percentage}%</span>
+                </div>
+                <div class="band-details">
+                    <div class="band-detail-row">
+                        <span>Income in this band:</span>
+                        <span class="band-amount">${formatCurrency(band.amount)}</span>
+                    </div>
+                    <div class="band-detail-row">
+                        <span>Tax paid:</span>
+                        <span class="band-tax">${formatCurrency(band.tax)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    breakdownHTML += '</div>';
+    breakdownDiv.innerHTML = breakdownHTML;
+
+    // Insert after the main breakdown card (before warnings/tax rates)
+    const resultsBreakdownCard = document.querySelector('.result-card:not(.highlight)');
+    resultsBreakdownCard.parentNode.insertBefore(breakdownDiv, resultsBreakdownCard.nextSibling);
+}
+
 function calculate() {
     // Get input values
     const grossSalary = parseFloat(salaryInput.value) || 0;
@@ -201,7 +257,9 @@ function calculate() {
     const personalAllowance = calculatePersonalAllowance(taxableIncome);
 
     // Calculate taxes
-    const incomeTax = calculateScottishIncomeTax(taxableIncome);
+    const taxResult = calculateScottishIncomeTax(taxableIncome);
+    const incomeTax = taxResult.tax;
+    const taxBandBreakdown = taxResult.breakdown;
     const nationalInsurance = calculateNationalInsurance(taxableIncome);
 
     // Calculate total additional deductions (annual)
@@ -225,6 +283,9 @@ function calculate() {
 
     // Show warning if personal allowance is reduced
     showPersonalAllowanceWarning(taxableIncome, personalAllowance);
+
+    // Show tax band breakdown
+    showTaxBandBreakdown(taxBandBreakdown);
 
     // Show results section
     resultsSection.style.display = 'block';
