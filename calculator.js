@@ -35,6 +35,7 @@ const netAnnualElement = document.getElementById('netAnnual');
 const grossSalaryElement = document.getElementById('grossSalary');
 const pensionAmountElement = document.getElementById('pensionAmount');
 const taxableIncomeElement = document.getElementById('taxableIncome');
+const personalAllowanceElement = document.getElementById('personalAllowance');
 const incomeTaxElement = document.getElementById('incomeTax');
 const nationalInsuranceElement = document.getElementById('nationalInsurance');
 const additionalMonthlyDisplayElement = document.getElementById('additionalMonthlyDisplay');
@@ -131,6 +132,40 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
+function showPersonalAllowanceWarning(taxableIncome, personalAllowance) {
+    // Remove any existing warnings
+    const existingWarning = document.getElementById('paWarning');
+    if (existingWarning) {
+        existingWarning.remove();
+    }
+
+    // Only show warning if personal allowance is reduced
+    if (taxableIncome > PA_TAPER_THRESHOLD) {
+        const reduction = PERSONAL_ALLOWANCE - personalAllowance;
+        const warningDiv = document.createElement('div');
+        warningDiv.id = 'paWarning';
+        warningDiv.className = 'result-card warning';
+
+        if (personalAllowance === 0) {
+            warningDiv.innerHTML = `
+                <h3>⚠️ Personal Allowance Lost</h3>
+                <p>Your income is over £125,140, so you have lost your entire personal allowance of £${PERSONAL_ALLOWANCE.toLocaleString()}.</p>
+                <p><strong>Consider:</strong> Increasing your pension contribution can reduce your taxable income and restore some of your personal allowance.</p>
+            `;
+        } else {
+            warningDiv.innerHTML = `
+                <h3>⚠️ Personal Allowance Reduced</h3>
+                <p>Your income is over £100,000, so your personal allowance has been reduced by £${reduction.toLocaleString()} (from £${PERSONAL_ALLOWANCE.toLocaleString()} to £${personalAllowance.toLocaleString()}).</p>
+                <p><strong>Tax saving tip:</strong> Increasing your pension contribution can reduce your taxable income below £100,000 and restore your full personal allowance.</p>
+            `;
+        }
+
+        // Insert warning before the tax rates card
+        const taxRatesCard = document.querySelector('.result-card.info');
+        taxRatesCard.parentNode.insertBefore(warningDiv, taxRatesCard);
+    }
+}
+
 function calculate() {
     // Get input values
     const grossSalary = parseFloat(salaryInput.value) || 0;
@@ -162,6 +197,9 @@ function calculate() {
     // Calculate taxable income (after pension sacrifice)
     const taxableIncome = grossSalary - pensionContribution;
 
+    // Calculate personal allowance (for display)
+    const personalAllowance = calculatePersonalAllowance(taxableIncome);
+
     // Calculate taxes
     const incomeTax = calculateScottishIncomeTax(taxableIncome);
     const nationalInsurance = calculateNationalInsurance(taxableIncome);
@@ -177,12 +215,16 @@ function calculate() {
     grossSalaryElement.textContent = formatCurrency(grossSalary);
     pensionAmountElement.textContent = formatCurrency(pensionContribution);
     taxableIncomeElement.textContent = formatCurrency(taxableIncome);
+    personalAllowanceElement.textContent = formatCurrency(personalAllowance);
     incomeTaxElement.textContent = formatCurrency(incomeTax);
     nationalInsuranceElement.textContent = formatCurrency(nationalInsurance);
     additionalMonthlyDisplayElement.textContent = formatCurrency(additionalMonthly * 12);
     additionalYearlyDisplayElement.textContent = formatCurrency(additionalYearly);
     netMonthlyElement.textContent = formatCurrency(netMonthly);
     netAnnualElement.textContent = formatCurrency(netAnnual);
+
+    // Show warning if personal allowance is reduced
+    showPersonalAllowanceWarning(taxableIncome, personalAllowance);
 
     // Show results section
     resultsSection.style.display = 'block';

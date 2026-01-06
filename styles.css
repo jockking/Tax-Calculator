@@ -167,6 +167,12 @@ header h1 {
     border-color: var(--primary-color);
 }
 
+.result-card.warning {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-left: 5px solid #ff9800;
+}
+
 .result-card h3 {
     font-size: 1.2rem;
     margin-bottom: 15px;
@@ -214,6 +220,13 @@ header h1 {
     color: #ffe6e6;
 }
 
+.result-row.info-row {
+    background: #e7f3ff;
+    margin: 0 -20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
 .tax-bands {
     display: grid;
     gap: 8px;
@@ -224,6 +237,16 @@ header h1 {
     background: white;
     border-radius: 4px;
     font-size: 0.9rem;
+}
+
+.tax-band.highlight-band {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+}
+
+.tax-band small {
+    color: #856404;
+    font-style: italic;
 }
 
 footer {
