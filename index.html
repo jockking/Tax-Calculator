@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scottish Pension Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Scottish Pension Calculator</h1>
+            <p class="subtitle">Calculate your optimal pension contribution and take-home pay</p>
+        </header>
+
+        <div class="calculator-wrapper">
+            <div class="input-section">
+                <h2>Your Details</h2>
+
+                <div class="form-group">
+                    <label for="salary">Annual Gross Salary (£)</label>
+                    <input type="number" id="salary" placeholder="e.g., 35000" min="0" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="pensionType">Pension Contribution Type</label>
+                    <select id="pensionType">
+                        <option value="percentage">Percentage of Salary</option>
+                        <option value="amount">Fixed Amount (£)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pensionContribution" id="pensionLabel">Pension Contribution (%)</label>
+                    <input type="number" id="pensionContribution" placeholder="e.g., 5" min="0" step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalMonthly">Additional Monthly Deductions (£)</label>
+                    <input type="number" id="additionalMonthly" placeholder="e.g., 100" min="0" step="0.01" value="0">
+                    <small>e.g., childcare vouchers, union fees, etc.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalYearly">Additional Yearly Deductions (£)</label>
+                    <input type="number" id="additionalYearly" placeholder="e.g., 500" min="0" step="0.01" value="0">
+                    <small>e.g., annual subscriptions, professional fees</small>
+                </div>
+
+                <button id="calculateBtn" class="calculate-btn">Calculate</button>
+            </div>
+
+            <div class="results-section" id="results" style="display: none;">
+                <h2>Your Take-Home Pay</h2>
+
+                <div class="result-card highlight">
+                    <div class="result-row">
+                        <span class="result-label">Net Monthly Pay</span>
+                        <span class="result-value" id="netMonthly">£0.00</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Net Annual Pay</span>
+                        <span class="result-value" id="netAnnual">£0.00</span>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Breakdown</h3>
+
+                    <div class="result-row">
+                        <span class="result-label">Gross Annual Salary</span>
+                        <span class="result-value" id="grossSalary">£0.00</span>
+                    </div>
+
+                    <div class="result-row deduction">
+                        <span class="result-label">Pension Contribution</span>
+                        <span class="result-value" id="pensionAmount">£0.00</span>
+                    </div>
+
+                    <div class="result-row">
+                        <span class="result-label">Taxable Income</span>
+                        <span class="result-value" id="taxableIncome">£0.00</span>
+                    </div>
+
+                    <div class="result-row deduction">
+                        <span class="result-label">Scottish Income Tax</span>
+                        <span class="result-value" id="incomeTax">£0.00</span>
+                    </div>
+
+                    <div class="result-row deduction">
+                        <span class="result-label">National Insurance</span>
+                        <span class="result-value" id="nationalInsurance">£0.00</span>
+                    </div>
+
+                    <div class="result-row deduction">
+                        <span class="result-label">Additional Deductions (Monthly)</span>
+                        <span class="result-value" id="additionalMonthlyDisplay">£0.00</span>
+                    </div>
+
+                    <div class="result-row deduction">
+                        <span class="result-label">Additional Deductions (Yearly)</span>
+                        <span class="result-value" id="additionalYearlyDisplay">£0.00</span>
+                    </div>
+                </div>
+
+                <div class="result-card info">
+                    <h3>Tax Rates Used (2025/26)</h3>
+                    <div class="tax-bands">
+                        <div class="tax-band">
+                            <strong>Personal Allowance:</strong> £12,570 (0%)
+                        </div>
+                        <div class="tax-band">
+                            <strong>Starter Rate:</strong> £12,571 - £14,876 (19%)
+                        </div>
+                        <div class="tax-band">
+                            <strong>Basic Rate:</strong> £14,877 - £26,561 (20%)
+                        </div>
+                        <div class="tax-band">
+                            <strong>Intermediate Rate:</strong> £26,562 - £43,662 (21%)
+                        </div>
+                        <div class="tax-band">
+                            <strong>Higher Rate:</strong> £43,663 - £75,000 (42%)
+                        </div>
+                        <div class="tax-band">
+                            <strong>Advanced Rate:</strong> £75,001 - £125,140 (45%)
+                        </div>
+                        <div class="tax-band">
+                            <strong>Top Rate:</strong> Over £125,140 (48%)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>This calculator uses 2025/26 Scottish tax rates and National Insurance rates.</p>
+            <p>Pension contributions are assumed to be made via salary sacrifice (before tax).</p>
+            <p><strong>Note:</strong> This is for guidance only and should not be considered financial advice.</p>
+        </footer>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+</html>
