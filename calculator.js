@@ -45,7 +45,7 @@ const additionalYearlyDisplayElement = document.getElementById('additionalYearly
 
 // Event Listeners
 pensionTypeSelect.addEventListener('change', updatePensionLabel);
-calculateBtn.addEventListener('click', calculate);
+calculateBtn.addEventListener('click', () => calculate(true));
 
 // Slider sync with input
 pensionSlider.addEventListener('input', (e) => {
@@ -99,7 +99,7 @@ additionalYearlyInput.addEventListener('input', () => {
 [salaryInput, pensionContributionInput, additionalMonthlyInput, additionalYearlyInput].forEach(input => {
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            calculate();
+            calculate(true);
         }
     });
 });
@@ -283,7 +283,7 @@ function showTaxBandBreakdown(breakdown) {
     resultsBreakdownCard.parentNode.insertBefore(breakdownDiv, resultsBreakdownCard.nextSibling);
 }
 
-function calculate() {
+function calculate(shouldScroll = false) {
     // Get input values
     const grossSalary = parseFloat(salaryInput.value) || 0;
     const pensionType = pensionTypeSelect.value;
@@ -293,7 +293,6 @@ function calculate() {
 
     // Validate input
     if (grossSalary <= 0) {
-        alert('Please enter a valid salary amount.');
         return;
     }
 
@@ -307,7 +306,6 @@ function calculate() {
 
     // Ensure pension contribution doesn't exceed salary
     if (pensionContribution > grossSalary) {
-        alert('Pension contribution cannot exceed your gross salary.');
         return;
     }
 
@@ -351,8 +349,8 @@ function calculate() {
     // Show results section
     resultsSection.style.display = 'block';
 
-    // Smooth scroll to results on mobile
-    if (window.innerWidth <= 768) {
+    // Smooth scroll to results on mobile only when Calculate button is clicked
+    if (shouldScroll && window.innerWidth <= 768) {
         resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
