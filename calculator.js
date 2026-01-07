@@ -55,6 +55,15 @@ pensionSlider.addEventListener('input', (e) => {
     }
 });
 
+// Prevent page scrolling on mobile when using slider
+pensionSlider.addEventListener('touchstart', (e) => {
+    e.stopPropagation();
+}, { passive: false });
+
+pensionSlider.addEventListener('touchmove', (e) => {
+    e.stopPropagation();
+}, { passive: false });
+
 // Input sync with slider
 pensionContributionInput.addEventListener('input', (e) => {
     if (pensionTypeSelect.value === 'percentage') {
