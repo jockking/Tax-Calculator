@@ -23,6 +23,8 @@ const PERSONAL_ALLOWANCE = 12570;
 const salaryInput = document.getElementById('salary');
 const pensionTypeSelect = document.getElementById('pensionType');
 const pensionContributionInput = document.getElementById('pensionContribution');
+const pensionSlider = document.getElementById('pensionSlider');
+const sliderContainer = document.getElementById('sliderContainer');
 const pensionLabel = document.getElementById('pensionLabel');
 const additionalMonthlyInput = document.getElementById('additionalMonthly');
 const additionalYearlyInput = document.getElementById('additionalYearly');
@@ -45,6 +47,45 @@ const additionalYearlyDisplayElement = document.getElementById('additionalYearly
 pensionTypeSelect.addEventListener('change', updatePensionLabel);
 calculateBtn.addEventListener('click', calculate);
 
+// Slider sync with input
+pensionSlider.addEventListener('input', (e) => {
+    pensionContributionInput.value = e.target.value;
+    if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
+        calculate();
+    }
+});
+
+// Input sync with slider
+pensionContributionInput.addEventListener('input', (e) => {
+    if (pensionTypeSelect.value === 'percentage') {
+        const value = parseFloat(e.target.value) || 0;
+        pensionSlider.value = Math.min(100, Math.max(0, value));
+    }
+    if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
+        calculate();
+    }
+});
+
+// Real-time calculation on salary input
+salaryInput.addEventListener('input', () => {
+    if (salaryInput.value && parseFloat(salaryInput.value) > 0 && pensionContributionInput.value) {
+        calculate();
+    }
+});
+
+// Real-time calculation on additional deductions
+additionalMonthlyInput.addEventListener('input', () => {
+    if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
+        calculate();
+    }
+});
+
+additionalYearlyInput.addEventListener('input', () => {
+    if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
+        calculate();
+    }
+});
+
 // Allow Enter key to trigger calculation
 [salaryInput, pensionContributionInput, additionalMonthlyInput, additionalYearlyInput].forEach(input => {
     input.addEventListener('keypress', (e) => {
@@ -59,9 +100,20 @@ function updatePensionLabel() {
     if (type === 'percentage') {
         pensionLabel.textContent = 'Pension Contribution (%)';
         pensionContributionInput.placeholder = 'e.g., 5';
+        sliderContainer.style.display = 'block';
+        // Sync slider with current input value
+        const currentValue = parseFloat(pensionContributionInput.value) || 5;
+        pensionSlider.value = currentValue;
+        pensionContributionInput.value = currentValue;
     } else {
         pensionLabel.textContent = 'Pension Contribution (£)';
         pensionContributionInput.placeholder = 'e.g., 2000';
+        sliderContainer.style.display = 'none';
+    }
+
+    // Recalculate if salary is entered
+    if (salaryInput.value && parseFloat(salaryInput.value) > 0 && pensionContributionInput.value) {
+        calculate();
     }
 }
 
