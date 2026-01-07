@@ -47,6 +47,17 @@ const additionalYearlyDisplayElement = document.getElementById('additionalYearly
 pensionTypeSelect.addEventListener('change', updatePensionLabel);
 calculateBtn.addEventListener('click', () => calculate(true));
 
+// Debounce function for smoother real-time calculations
+let debounceTimer;
+function debounceCalculate() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
+            calculate();
+        }
+    }, 150);
+}
+
 // Slider sync with input
 pensionSlider.addEventListener('input', (e) => {
     pensionContributionInput.value = e.target.value;
@@ -70,29 +81,31 @@ pensionContributionInput.addEventListener('input', (e) => {
         const value = parseFloat(e.target.value) || 0;
         pensionSlider.value = Math.min(100, Math.max(0, value));
     }
-    if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
-        calculate();
-    }
+    debounceCalculate();
 });
 
 // Real-time calculation on salary input
 salaryInput.addEventListener('input', () => {
-    if (salaryInput.value && parseFloat(salaryInput.value) > 0 && pensionContributionInput.value) {
-        calculate();
-    }
+    debounceCalculate();
 });
 
 // Real-time calculation on additional deductions
 additionalMonthlyInput.addEventListener('input', () => {
-    if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
-        calculate();
-    }
+    debounceCalculate();
 });
 
 additionalYearlyInput.addEventListener('input', () => {
-    if (salaryInput.value && parseFloat(salaryInput.value) > 0) {
-        calculate();
-    }
+    debounceCalculate();
+});
+
+// Prevent mobile keyboard from causing scrolling issues
+[salaryInput, pensionContributionInput, additionalMonthlyInput, additionalYearlyInput].forEach(input => {
+    input.addEventListener('focus', (e) => {
+        // Prevent automatic scroll to bottom on focus
+        setTimeout(() => {
+            window.scrollTo(window.scrollX, window.scrollY);
+        }, 10);
+    });
 });
 
 // Allow Enter key to trigger calculation
